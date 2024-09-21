@@ -90,8 +90,8 @@ jobs:
       #     mkdir -p ./docs/nextjs-project
       #     cp -r ./nextjs-project/out/* ./docs/nextjs-project
 
-      - name: Checkout
-        uses: actions/checkout@v4
+      # - name: Checkout
+      #   uses: actions/checkout@v4
       - name: Detect package manager
         id: detect-nuxt-package-manager
         working-directory: ${{ github.workspace }}/nuxtjs-project
