@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Detect package manager
-        id: detect-package-manager
+        id: detect-next-package-manager
         run: |
           if [ -f "${{ github.workspace }}/nextjs-project/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
@@ -38,7 +38,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache: ${{ steps.detect-next-package-manager.outputs.manager }}
           cache-dependency-path: ${{ github.workspace }}/nextjs-project/package-lock.json
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -59,9 +59,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        run: ${{ steps.detect-next-package-manager.outputs.manager }} ${{ steps.detect-next-package-manager.outputs.command }}
       - name: Build with Next.js
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        run: ${{ steps.detect-next-package-manager.outputs.runner }} next build
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
