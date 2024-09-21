@@ -27,7 +27,10 @@ jobs:
           npm run install-all
 
       - name: Build
-        run: npm run build-all
+        run: |
+          pwd
+          ls
+          npm run build-all
 
       # - name: Copy files to docs directory
       #   run: |
