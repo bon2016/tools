@@ -1,36 +1,16 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useState, Suspense } from 'react';
 
 const FormPage = () => {
     const searchParams = useSearchParams();
-    const router = useRouter();
 
     const formId = searchParams.get('formId');
     const redirectUrl = searchParams.get('redirectUrl');
 
-    console.log('formId:', formId);
-    console.log('redirectUrl:', redirectUrl);
-
     // 初回表示か否かを判定するステートを定義しておく
     const [isFirst, setIsFirst] = useState(true);
-
-    useEffect(() => {
-        // フォーム送信後のリダイレクト処理
-        // const handleMessage = (event: MessageEvent) => {
-        //     console.log('event:', event);
-        //     if (event.data === 'formSubmitted') {
-        //         router.push(redirectUrl as string);
-        //     }
-        // };
-
-        // window.addEventListener('message', handleMessage);
-
-        // return () => {
-        //     window.removeEventListener('message', handleMessage);
-        // };
-    }, [redirectUrl, router]);
 
     if (!formId || !redirectUrl) {
         return <p>フォーム ID またはリダイレクト URL が指定されていません。</p>;
@@ -42,18 +22,11 @@ const FormPage = () => {
     // フォーム回答後はリダイレクトさせる
     const redirect = () => {
         // 初回表示時はリダイレクトさせない
-        console.log('onLoad iframe');
-        console.log('isFirst:', isFirst);
         if (isFirst) {
             setIsFirst(false);
             return;
         }
 
-        console.log('redirect');
-
-        // router.push(redirectUrl as string);
-        // window.location.href = redirectUrl as string;
-        // window.location.replace(formUrl);
         const link = document.createElement('a');
         link.href = redirectUrl
         link.style.display = 'none';
