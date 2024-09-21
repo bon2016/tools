@@ -118,7 +118,7 @@ jobs:
         with:
           node-version: "20"
           cache: ${{ steps.detect-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ github.workspace }}/nuxtjs-project/package-lock.json
+          cache-dependency-path: ${{ github.workspace }}/nuxtjs-project/yarn.lock
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
@@ -149,10 +149,12 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: nextjs-project
     steps:
+      - name: Check deploy directory
+        run: |
+          ls docs
+          ls docs/nextjs-project
+          ls docs/nuxtjs-project
       - name: Upload artifact
         uses: actions/download-artifact@v3
         with:
