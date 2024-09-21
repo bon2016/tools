@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams, useRouter, redirect } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 
 const FormPage = () => {
@@ -18,17 +18,17 @@ const FormPage = () => {
 
     useEffect(() => {
         // フォーム送信後のリダイレクト処理
-        const handleMessage = (event: MessageEvent) => {
-            if (event.data === 'formSubmitted') {
-                router.push(redirectUrl as string);
-            }
-        };
+        // const handleMessage = (event: MessageEvent) => {
+        //     if (event.data === 'formSubmitted') {
+        //         router.push(redirectUrl as string);
+        //     }
+        // };
 
-        window.addEventListener('message', handleMessage);
+        // window.addEventListener('message', handleMessage);
 
-        return () => {
-            window.removeEventListener('message', handleMessage);
-        };
+        // return () => {
+        //     window.removeEventListener('message', handleMessage);
+        // };
     }, [redirectUrl, router]);
 
     if (!formId || !redirectUrl) {
@@ -39,7 +39,7 @@ const FormPage = () => {
 
 
     // フォーム回答後はリダイレクトさせる
-    const redirect = () => {
+    const redirectTo = () => {
         // 初回表示時はリダイレクトさせない
         if (isFirst) {
             setIsFirst(false);
@@ -48,15 +48,18 @@ const FormPage = () => {
 
         console.log('redirect');
 
+        // router.push(redirectUrl as string);
         // router.push(formUrl);
         window.location.href = redirectUrl;
         // window.location.replace(formUrl);
+        // router.push(redirectUrl);
+        // redirect(redirectUrl);
     };
 
     // window.postMessage()
 
     return (
-        <div onLoad={redirect}>
+        <div onLoad={redirectTo}>
 
             <iframe
                 src={formUrl}

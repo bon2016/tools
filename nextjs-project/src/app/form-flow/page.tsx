@@ -24,7 +24,9 @@ const Page = () => {
 
         console.log('location.href:', window.location.href);
 
-        const url = join(window.location.href, `form-redirect?formId=${formId}&redirectUrl=${redirectUrl}`);
+        const baseUrl = window.location.href.split('?')[0];
+
+        const url = join(baseUrl, `form-redirect?formId=${formId}&redirectUrl=${redirectUrl}`);
         setUrl(url);
     };
 
