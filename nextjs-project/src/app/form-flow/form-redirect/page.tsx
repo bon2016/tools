@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams, useRouter, redirect } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 
 const FormPage = () => {
