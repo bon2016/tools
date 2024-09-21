@@ -3,9 +3,12 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
+    "install-all": "npm-run-all -p \"prefix:* -- install\"",
     "build-all": "npm-run-all -p \"run:* -- build\"",
+    "prefix:self": "npm --prefix ./",
     "prefix:nextjs": "npm --prefix ./nextjs-project",
     "prefix:nuxtjs": "npm --prefix ./nuxtjs-project",
+    "run:self": "npm --prefix ./ run",
     "run:nextjs": "npm --prefix ./nextjs-project run",
     "run:nuxtjs": "npm --prefix ./nuxtjs-project run"
   },
