@@ -84,11 +84,11 @@ jobs:
       - name: Build with Next.js
         working-directory: ${{ github.workspace }}/nextjs-project
         run: ${{ steps.detect-next-package-manager.outputs.runner }} next build
-      - name: Copy static files
-        working-directory: ${{ github.workspace }}
-        run: |
-          mkdir -p ./docs/nextjs-project
-          cp -r ./nextjs-project/out/* ./docs/nextjs-project
+      # - name: Copy static files
+      #   working-directory: ${{ github.workspace }}
+      #   run: |
+      #     mkdir -p ./docs/nextjs-project
+      #     cp -r ./nextjs-project/out/* ./docs/nextjs-project
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -137,11 +137,15 @@ jobs:
       - name: Static HTML export with Nuxt
         working-directory: ${{ github.workspace }}/nuxtjs-project
         run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} run generate
+
       - name: Copy static files
         working-directory: ${{ github.workspace }}
         run: |
           ls docs
-          mkdir -p ./docs/nuxtjs-project
+          ls nextjs-project/out
+          ls nuxtjs-project/dist
+          mkdir -p ./docs/nextjs-project ./docs/nuxtjs-project
+          cp -r nextjs-project/out/* ./docs/nextjs-project
           cp -r nuxtjs-project/dist/* ./docs/nuxtjs-project
 
       - name: Check deploy directory
