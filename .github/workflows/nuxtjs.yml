@@ -4,7 +4,7 @@ name: Deploy Nuxt site to Pages
 #   push:
 #     branches: ["main"]
 #   workflow_dispatch:
-on: [push]
+# on: [push]
 
 permissions:
   contents: read
