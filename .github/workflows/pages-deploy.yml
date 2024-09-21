@@ -145,6 +145,7 @@ jobs:
           cp -r nuxtjs-project/dist/* ./docs/nuxtjs-project
 
       - name: Check deploy directory
+        working-directory: ${{ github.workspace }}
         run: |
           ls docs
           ls docs/nextjs-project
