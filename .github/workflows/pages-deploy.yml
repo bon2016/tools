@@ -142,15 +142,15 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           mkdir -p ./docs/nextjs-project ./docs/nuxtjs-project
-          cp -r nextjs-project/out/* ./docs/nextjs-project
-          cp -r nuxtjs-project/dist/* ./docs/nuxtjs-project
+          cp -r ./nextjs-project/out/* ./docs/nextjs-project
+          cp -r ./nuxtjs-project/dist/* ./docs/nuxtjs-project
 
       - name: Check deploy directory
         working-directory: ${{ github.workspace }}
         run: |
-          ls docs
-          ls docs/nextjs-project
-          ls docs/nuxtjs-project
+          ls ./docs
+          ls ./docs/nextjs-project
+          ls ./docs/nuxtjs-project
       - name: Upload artifact
         uses: actions/download-artifact@v3
         with:
