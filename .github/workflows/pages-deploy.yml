@@ -1,44 +1,64 @@
-name: Pages Deploy
+# Sample workflow for building and deploying a Next.js site to GitHub Pages
+#
+# To get started with Next.js see: https://nextjs.org/docs/getting-started
+#
+name: Deploy Next.js site to Pages
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   # Runs on pushes targeting the default branch
+#   push:
+#     branches: ["main"]
+
+#   # Allows you to run this workflow manually from the Actions tab
+#   workflow_dispatch:
+
+on: [push]
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
+  build-nextjs:
+    uses: ./.github/workflows/nextjs.yml
+
+  build-nuxtjs:
+    uses: ./.github/workflows/nuxtjs.yml
+
   deploy:
+    needs: 
+      - build-nextjs
+      - build-nuxtjs
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Download Next.js Artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: 14
+          name: nextjs-artifact
+          path: ./docs/nextjs-project
 
-      - name: Install dependencies
-        run: |
-          npm i
-
-      - name: Install subdirectory dependencies
-        run: |
-          npm run install-all
-
-      - name: Build
-        run: |
-          pwd
-          ls
-          npm run build-all
-
-      # - name: Copy files to docs directory
-      #   run: |
-      #     mkdir -p docs
-      #     cp -R build/* docs/
-
+      - name: Download Nuxt.js Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuxtjs-artifact
+          path: ./docs/nuxtjs-project
+  
+      - name: Upload Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+          
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
+        id: deployment
+        uses: actions/deploy-pages@v4

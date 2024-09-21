@@ -1,0 +1,66 @@
+# Sample workflow for building and deploying a Nuxt site to GitHub Pages
+#
+# To get started with Nuxt see: https://nuxtjs.org/docs/get-started/installation
+#
+name: Build Nuxt.js
+
+on:
+  workflow_call:
+
+jobs:
+  # Build job
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: nuxtjs-project
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Detect package manager
+        id: detect-nuxt-package-manager
+        run: |
+          if [ -f "${{ github.workspace }}/nuxtjs-project/yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            exit 0
+          elif [ -f "${{ github.workspace }}/nuxtjs-project/package.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "Unable to determine package manager"
+            exit 1
+          fi
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: ${{ steps.detect-nuxt-package-manager.outputs.manager }}
+          cache-dependency-path: ${{ github.workspace }}/nuxtjs-project/yarn.lock
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          # Automatically inject router.base in your Nuxt configuration file and set
+          # target to static (https://nuxtjs.org/docs/configuration-glossary/configuration-target/).
+          #
+          # You may remove this line if you want to manage the configuration yourself.
+          static_site_generator: nuxt
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            .nuxt
+          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('dist') }}
+          restore-keys: |
+            ${{ runner.os }}-nuxt-build-
+      - name: Install dependencies
+        run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} ${{ steps.detect-nuxt-package-manager.outputs.command }}
+      - name: Static HTML export with Nuxt
+        run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} run generate
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuxtjs-artifact
+          path: nuxtjs-project/dist
