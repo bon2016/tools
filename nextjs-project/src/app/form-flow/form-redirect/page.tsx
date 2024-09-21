@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
 const FormPage = () => {
     const searchParams = useSearchParams();
@@ -14,7 +14,7 @@ const FormPage = () => {
     console.log('redirectUrl:', redirectUrl);
 
     // 初回表示か否かを判定するステートを定義しておく
-    // const [isFirst, setIsFirst] = useState(true);
+    const [isFirst, setIsFirst] = useState(true);
 
     useEffect(() => {
         // フォーム送信後のリダイレクト処理
@@ -43,11 +43,11 @@ const FormPage = () => {
     const redirect = () => {
         // 初回表示時はリダイレクトさせない
         console.log('onLoad iframe');
-        // console.log('isFirst:', isFirst);
-        // if (isFirst) {
-        //     setIsFirst(false);
-        //     return;
-        // }
+        console.log('isFirst:', isFirst);
+        if (isFirst) {
+            setIsFirst(false);
+            return;
+        }
 
         console.log('redirect');
 
