@@ -28,7 +28,7 @@ concurrency:
 
 jobs:
   # Build job
-  next-build:
+  build:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -37,7 +37,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Detect package manager
-        id: detect-package-manager
+        id: detect-next-package-manager
+        working-directory: ${{ github.workspace }}/nextjs-project
         run: |
           if [ -f "${{ github.workspace }}/nextjs-project/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
@@ -57,7 +58,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache: ${{ steps.detect-next-package-manager.outputs.manager }}
           cache-dependency-path: ${{ github.workspace }}/nextjs-project/package-lock.json
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -78,28 +79,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        working-directory: ${{ github.workspace }}/nextjs-project
+        run: ${{ steps.detect-next-package-manager.outputs.manager }} ${{ steps.detect-next-package-manager.outputs.command }}
       - name: Build with Next.js
-        run: ${{ steps.detect-package-manager.outputs.runner }} next build
+        working-directory: ${{ github.workspace }}/nextjs-project
+        run: ${{ steps.detect-next-package-manager.outputs.runner }} next build
       - name: Copy static files
-        working-directory: ${{ github.workspace }}
         run: |
           mkdir -p ./docs/nextjs-project
           cp -r ./nextjs-project/out/* ./docs/nextjs-project
-      # - name: Upload artifact
-      #   uses: actions/upload-pages-artifact@v3
-      #   with:
-      #     path: ./docs
-  nuxt-build:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: nuxtjs-project
-    steps:
+
       - name: Checkout
         uses: actions/checkout@v4
       - name: Detect package manager
-        id: detect-package-manager
+        id: detect-nuxt-package-manager
+        working-directory: ${{ github.workspace }}/nuxtjs-project
         run: |
           if [ -f "${{ github.workspace }}/nuxtjs-project/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
@@ -117,7 +111,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
+          cache: ${{ steps.detect-nuxt-package-manager.outputs.manager }}
           cache-dependency-path: ${{ github.workspace }}/nuxtjs-project/yarn.lock
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -137,19 +131,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuxt-build-
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        working-directory: ${{ github.workspace }}/nuxtjs-project
+        run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} ${{ steps.detect-nuxt-package-manager.outputs.command }}
       - name: Static HTML export with Nuxt
-        run: ${{ steps.detect-package-manager.outputs.manager }} run generate
+        working-directory: ${{ github.workspace }}/nuxtjs-project
+        run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} run generate
       - name: Copy static files
-        working-directory: ${{ github.workspace }}
         run: |
           ls docs
           mkdir -p ./docs/nuxtjs-project
           cp -r nuxtjs-project/dist/* ./docs/nuxtjs-project
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
       - name: Check deploy directory
         run: |
           ls docs
