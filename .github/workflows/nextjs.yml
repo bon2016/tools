@@ -66,4 +66,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: nextjs-artifact
-          path: ./out
+          path: nextjs-project/out
