@@ -81,10 +81,15 @@ jobs:
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+      - name: Copy static files
+        working-directory: ${{ github.workspace }}
+        run: |
+          mkdir -p ./docs/nextjs-project
+          cp -r ./nextjs-project/out/* ./docs/nextjs-project
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./nextjs-project/out
+          path: ./docs
 
   # Deployment job
   deploy:
@@ -97,5 +102,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          base_path: "/nextjs-project"
+        # with:
+        #   base_path: "/nextjs-project"
