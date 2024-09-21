@@ -1,9 +1,10 @@
 name: Pages Deploy
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+on: [push]
 
 jobs:
   deploy:
@@ -30,6 +31,7 @@ jobs:
         run: |
           pwd
           ls
+          ls nuxtjs-project
           npm run build-all
 
       # - name: Copy files to docs directory
