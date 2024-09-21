@@ -143,6 +143,7 @@ jobs:
       - name: Copy static files
         working-directory: ${{ github.workspace }}
         run: |
+          ls docs
           mkdir -p ./docs/nuxtjs-project
           cp -r nuxtjs-project/dist/* ./docs/nuxtjs-project
 
