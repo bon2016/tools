@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
-import { join } from "path";
-
 
 const Page = () => {
     const [formInfo, setFormInfo] = useState('');
