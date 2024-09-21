@@ -60,6 +60,6 @@ jobs:
       - name: Static HTML export with Nuxt
         run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} run generate
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: nuxtjs-project/dist

@@ -28,7 +28,7 @@ concurrency:
 
 jobs:
   build-nextjs:
-    uses: ./.github/workflows/nuxtjs.yml
+    uses: ./.github/workflows/nextjs.yml
 
   build-nuxtjs:
     uses: ./.github/workflows/nuxtjs.yml
@@ -40,19 +40,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Next.js Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: nextjs-artifact
           path: ./docs/nextjs-project
 
       - name: Download Nuxt.js Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: nuxtjs-artifact
           path: ./docs/nuxtjs-project
   
       - name: Upload Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./docs
           
