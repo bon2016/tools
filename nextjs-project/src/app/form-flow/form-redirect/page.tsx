@@ -51,8 +51,8 @@ const FormPage = () => {
 
         console.log('redirect');
 
-        router.push(redirectUrl as string);
-        // window.location.href = redirectUrl as string;
+        // router.push(redirectUrl as string);
+        window.location.href = redirectUrl as string;
         // window.location.replace(formUrl);
     };
 
