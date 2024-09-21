@@ -1,0 +1,19 @@
+{
+  "name": "tools",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build-all": "npm-run-all -p \"run:* -- build\"",
+    "prefix:nextjs": "npm --prefix ./nextjs-project",
+    "prefix:nuxtjs": "npm --prefix ./nuxtjs-project",
+    "run:nextjs": "npm --prefix ./nextjs-project run",
+    "run:nuxtjs": "npm --prefix ./nuxtjs-project run"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "npm-run-all": "^4.1.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
