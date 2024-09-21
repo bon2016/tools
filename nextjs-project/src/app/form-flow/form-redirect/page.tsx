@@ -52,8 +52,15 @@ const FormPage = () => {
         console.log('redirect');
 
         // router.push(redirectUrl as string);
-        window.location.href = redirectUrl as string;
+        // window.location.href = redirectUrl as string;
         // window.location.replace(formUrl);
+        const link = document.createElement('a');
+        link.href = redirectUrl
+        link.style.display = 'none';
+        link.target = '_self';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     // window.postMessage()
