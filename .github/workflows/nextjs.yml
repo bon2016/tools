@@ -61,6 +61,8 @@ jobs:
       - name: Install dependencies
         run: ${{ steps.detect-next-package-manager.outputs.manager }} ${{ steps.detect-next-package-manager.outputs.command }}
       - name: Build with Next.js
+        env:
+          NEXT_PUBLIC_BASE_PATH: /nextjs-project
         run: ${{ steps.detect-next-package-manager.outputs.runner }} next build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
