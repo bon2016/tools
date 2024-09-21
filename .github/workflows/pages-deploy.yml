@@ -85,6 +85,7 @@ jobs:
         working-directory: ${{ github.workspace }}/nextjs-project
         run: ${{ steps.detect-next-package-manager.outputs.runner }} next build
       - name: Copy static files
+        working-directory: ${{ github.workspace }}
         run: |
           mkdir -p ./docs/nextjs-project
           cp -r ./nextjs-project/out/* ./docs/nextjs-project
@@ -137,6 +138,7 @@ jobs:
         working-directory: ${{ github.workspace }}/nuxtjs-project
         run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} run generate
       - name: Copy static files
+        working-directory: ${{ github.workspace }}
         run: |
           ls docs
           mkdir -p ./docs/nuxtjs-project
