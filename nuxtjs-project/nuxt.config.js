@@ -83,7 +83,7 @@ export default {
   build: {},
 
   router: {
-    base: '/nuxtjs-project/',
+    base: process.env.NUXT_PUBLIC_BASE_PATH || '',
   },
 
 }

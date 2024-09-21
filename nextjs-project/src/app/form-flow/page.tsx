@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
 const FormPage = () => {
     const searchParams = useSearchParams();
@@ -49,7 +49,7 @@ const FormPage = () => {
         console.log('redirect');
 
         // router.push(formUrl);
-        window.location.href=redirectUrl;
+        window.location.href = redirectUrl;
         // window.location.replace(formUrl);
     };
 
@@ -72,4 +72,10 @@ const FormPage = () => {
     );
 };
 
-export default FormPage;
+const SuspendedFormPage = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <FormPage />
+    </Suspense>
+);
+
+export default SuspendedFormPage;
