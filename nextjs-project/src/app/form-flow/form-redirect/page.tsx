@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, Suspense } from 'react';
 
 const FormPage = () => {
     const searchParams = useSearchParams();
@@ -14,11 +14,12 @@ const FormPage = () => {
     console.log('redirectUrl:', redirectUrl);
 
     // 初回表示か否かを判定するステートを定義しておく
-    const [isFirst, setIsFirst] = useState(true);
+    // const [isFirst, setIsFirst] = useState(true);
 
     useEffect(() => {
         // フォーム送信後のリダイレクト処理
         // const handleMessage = (event: MessageEvent) => {
+        //     console.log('event:', event);
         //     if (event.data === 'formSubmitted') {
         //         router.push(redirectUrl as string);
         //     }
@@ -39,27 +40,26 @@ const FormPage = () => {
 
 
     // フォーム回答後はリダイレクトさせる
-    const redirectTo = () => {
+    const redirect = () => {
         // 初回表示時はリダイレクトさせない
-        if (isFirst) {
-            setIsFirst(false);
-            return;
-        }
+        console.log('onLoad iframe');
+        // console.log('isFirst:', isFirst);
+        // if (isFirst) {
+        //     setIsFirst(false);
+        //     return;
+        // }
 
         console.log('redirect');
 
-        // router.push(redirectUrl as string);
-        // router.push(formUrl);
-        window.location.href = redirectUrl;
+        router.push(redirectUrl as string);
+        // window.location.href = redirectUrl as string;
         // window.location.replace(formUrl);
-        // router.push(redirectUrl);
-        // redirect(redirectUrl);
     };
 
     // window.postMessage()
 
     return (
-        <div onLoad={redirectTo}>
+        <div onLoad={redirect}>
 
             <iframe
                 src={formUrl}
