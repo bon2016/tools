@@ -1,81 +1,62 @@
 'use client';
 
-import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
-
-const FormPage = () => {
-    const searchParams = useSearchParams();
-    const router = useRouter();
-
-    const formId = searchParams.get('formId');
-    const redirectUrl = searchParams.get('redirectUrl');
-
-    console.log('formId:', formId);
-    console.log('redirectUrl:', redirectUrl);
-
-    // 初回表示か否かを判定するステートを定義しておく
-    const [isFirst, setIsFirst] = useState(true);
-
-    useEffect(() => {
-        // フォーム送信後のリダイレクト処理
-        const handleMessage = (event: MessageEvent) => {
-            if (event.data === 'formSubmitted') {
-                router.push(redirectUrl as string);
-            }
-        };
-
-        window.addEventListener('message', handleMessage);
-
-        return () => {
-            window.removeEventListener('message', handleMessage);
-        };
-    }, [redirectUrl, router]);
-
-    if (!formId || !redirectUrl) {
-        return <p>フォーム ID またはリダイレクト URL が指定されていません。</p>;
-    }
-
-    const formUrl = `https://docs.google.com/forms/d/e/${formId}/viewform?embedded=true`;
+import { useState } from 'react';
+import { QRCodeCanvas } from 'qrcode.react';
+import { join } from "path";
 
 
-    // フォーム回答後はリダイレクトさせる
-    const redirect = () => {
-        // 初回表示時はリダイレクトさせない
-        if (isFirst) {
-            setIsFirst(false);
-            return;
-        }
+const Page = () => {
+    const [formInfo, setFormInfo] = useState('');
+    const [redirectUrl, setRedirectUrl] = useState('');
+    const [url, setUrl] = useState('');
 
-        console.log('redirect');
+    const generateUrl = () => {
+        // URLの作成ロジックを実装する
+        // formIdとredirectUrlを組み合わせてURLを生成する処理を記述する
+        // 例: const url = `https://docs.google.com/forms/d/${formId}/viewform?usp=redirect_to=${redirectUrl}`;
+        // 生成したURLをQRコードに反映させるために、QRコードコンポーネントに渡す
 
-        // router.push(formUrl);
-        window.location.href = redirectUrl;
-        // window.location.replace(formUrl);
+        console.log('formInfo:', formInfo);
+
+        const formId = formInfo.split('/').length > 1 ? formInfo.split('/')[formInfo.split('/').length - 2] : formInfo;
+
+        console.log('redirectUrl:', redirectUrl);
+
+        console.log('location.href:', window.location.href);
+
+        const url = join(window.location.href, `form-redirect?formId=${formId}&redirectUrl=${redirectUrl}`);
+        setUrl(url);
     };
 
-    // window.postMessage()
-
     return (
-        <div onLoad={redirect}>
-
-            <iframe
-                src={formUrl}
-                width="100%"
-                height="800"
-                frameBorder="0"
-                marginHeight={0}
-                marginWidth={0}
-            >
-                読み込んでいます…
-            </iframe>
+        <div>
+            <h1>Form Flow</h1>
+            <div>
+                <label htmlFor="formInfo">Google Form ID or URL:</label>
+                <input
+                    type="text"
+                    id="formInfo"
+                    value={formInfo}
+                    onChange={(e) => setFormInfo(e.target.value)}
+                />
+            </div>
+            <div>
+                <label htmlFor="redirectUrl">Redirect URL:</label>
+                <input
+                    type="text"
+                    id="redirectUrl"
+                    value={redirectUrl}
+                    onChange={(e) => setRedirectUrl(e.target.value)}
+                />
+            </div>
+            <button onClick={generateUrl}>Generate URL</button>
+            <p>{url}</p>
+            <QRCodeCanvas value={url} size={256} level='H' marginSize={1}/>
+            {/* QRコードを表示する */}
+            {/* QRコードコンポーネントに生成したURLを渡す */}
+            {/* 例: <QRCode value={url} /> */}
         </div>
     );
 };
 
-const SuspendedFormPage = () => (
-    <Suspense fallback={<div>Loading...</div>}>
-        <FormPage />
-    </Suspense>
-);
-
-export default SuspendedFormPage;
+export default Page;
