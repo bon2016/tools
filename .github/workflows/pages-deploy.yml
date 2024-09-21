@@ -27,143 +27,35 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Build job
-  build:
+  build-nextjs:
+    uses: ./.github/workflows/nuxtjs.yml
+
+  build-nuxtjs:
+    uses: ./.github/workflows/nuxtjs.yml
+
+  deploy:
+    needs: 
+      - build-nextjs
+      - build-nuxtjs
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: nextjs-project
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-next-package-manager
-        working-directory: ${{ github.workspace }}/nextjs-project
-        run: |
-          if [ -f "${{ github.workspace }}/nextjs-project/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            echo "runner=yarn" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/nextjs-project/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: ${{ steps.detect-next-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ github.workspace }}/nextjs-project/package-lock.json
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
-          static_site_generator: next
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            .next/cache
-          # Generate a new cache whenever packages or source files change.
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          # If source files changed but packages didn't, rebuild from a prior cache.
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
-      - name: Install dependencies
-        working-directory: ${{ github.workspace }}/nextjs-project
-        run: ${{ steps.detect-next-package-manager.outputs.manager }} ${{ steps.detect-next-package-manager.outputs.command }}
-      - name: Build with Next.js
-        working-directory: ${{ github.workspace }}/nextjs-project
-        run: ${{ steps.detect-next-package-manager.outputs.runner }} next build
-      # - name: Copy static files
-      #   working-directory: ${{ github.workspace }}
-      #   run: |
-      #     mkdir -p ./docs/nextjs-project
-      #     cp -r ./nextjs-project/out/* ./docs/nextjs-project
-
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-nuxt-package-manager
-        working-directory: ${{ github.workspace }}/nuxtjs-project
-        run: |
-          if [ -f "${{ github.workspace }}/nuxtjs-project/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/nuxtjs-project/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: ${{ steps.detect-nuxt-package-manager.outputs.manager }}
-          cache-dependency-path: ${{ github.workspace }}/nuxtjs-project/yarn.lock
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          # Automatically inject router.base in your Nuxt configuration file and set
-          # target to static (https://nuxtjs.org/docs/configuration-glossary/configuration-target/).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
-          static_site_generator: nuxt
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            dist
-            .nuxt
-          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('dist') }}
-          restore-keys: |
-            ${{ runner.os }}-nuxt-build-
-      - name: Install dependencies
-        working-directory: ${{ github.workspace }}/nuxtjs-project
-        run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} ${{ steps.detect-nuxt-package-manager.outputs.command }}
-      - name: Static HTML export with Nuxt
-        working-directory: ${{ github.workspace }}/nuxtjs-project
-        run: ${{ steps.detect-nuxt-package-manager.outputs.manager }} run generate
-
-      - name: Copy static files
-        working-directory: ${{ github.workspace }}
-        run: |
-          mkdir -p ./docs/nextjs-project ./docs/nuxtjs-project
-          cp -r ./nextjs-project/out/* ./docs/nextjs-project
-          cp -r ./nuxtjs-project/dist/* ./docs/nuxtjs-project
-
-      - name: Check deploy directory
-        working-directory: ${{ github.workspace }}
-        run: |
-          ls ./docs
-          ls ./docs/nextjs-project
-          ls ./docs/nuxtjs-project
-      - name: Upload artifact
+      - name: Download Next.js Artifact
         uses: actions/download-artifact@v3
         with:
-          path: ./docs
+          name: nextjs-artifact
+          path: ./docs/nextjs-project
 
-  # Deployment job
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+      - name: Download Nuxt.js Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: nuxtjs-artifact
+          path: ./docs/nuxtjs-project
+  
+      - name: Upload Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs
+          
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
