@@ -24,11 +24,11 @@ jobs:
       - name: Detect package manager
         id: detect-package-manager
         run: |
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
+          if [ -f "${{ github.workspace }}/nuxtjs-project/yarn.lock" ]; then
             echo "manager=yarn" >> $GITHUB_OUTPUT
             echo "command=install" >> $GITHUB_OUTPUT
             exit 0
-          elif [ -f "${{ github.workspace }}/package.json" ]; then
+          elif [ -f "${{ github.workspace }}/nuxtjs-project/package.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
             echo "command=ci" >> $GITHUB_OUTPUT
             exit 0
@@ -49,19 +49,21 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            dist
-            .nuxt
-          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('dist') }}
+            nuxtjs-project/dist
+            nuxtjs-project/.nuxt
+          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('nuxtjs-project/dist') }}
           restore-keys: |
             ${{ runner.os }}-nuxt-build-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+        working-directory: nuxtjs-project
       - name: Static HTML export with Nuxt
         run: ${{ steps.detect-package-manager.outputs.manager }} run generate
+        working-directory: nuxtjs-project
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: nuxtjs-project/dist
 
   deploy:
     environment:
