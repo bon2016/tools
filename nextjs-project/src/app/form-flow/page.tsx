@@ -5,6 +5,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 
 const Page = () => {
     const [formInfo, setFormInfo] = useState('');
+    const [sessionNumber, setSessionNumber] = useState(1);
     const [redirectUrl, setRedirectUrl] = useState('');
     const [url, setUrl] = useState('');
 
@@ -13,7 +14,7 @@ const Page = () => {
 
         const baseUrl = new URL(window.location.href);
 
-        const url = new URL(`${baseUrl.pathname}/form-redirect?formId=${formId}&redirectUrl=${redirectUrl}`, baseUrl.origin).toString();
+        const url = new URL(`${baseUrl.pathname}/form-redirect?formId=${formId}&redirectUrl=${redirectUrl}&sessionNumber=${sessionNumber}`, baseUrl.origin).toString();
         setUrl(url);
     };
 
@@ -27,6 +28,15 @@ const Page = () => {
                     id="formInfo"
                     value={formInfo}
                     onChange={(e) => setFormInfo(e.target.value)}
+                />
+            </div>
+            <div>
+                <label htmlFor="sessionNumber">Number of Google Form Session</label>
+                <input
+                    type="number"
+                    id="sessionNumber"
+                    value={sessionNumber}
+                    onChange={(e) => setSessionNumber(e.target.valueAsNumber)}
                 />
             </div>
             <div>
